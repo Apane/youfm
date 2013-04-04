@@ -1,0 +1,189 @@
+<section id="sideBar">
+	<ul>
+		<h3>Browse</h3>
+		<li class="selectSidebar"><div id="" class="sidebarIcon welcomeIcon"></div><span class="menuText">Welcome To YouFM</span></li>
+		<li><div class="sidebarIcon topIcon"></div><span class="menuText">Billboard Top 100</span></li>
+		<li><div class="sidebarIcon newIcon"></div><span class="menuText">New Releases</span></li>
+	</ul>
+
+	<% if user_signed_in? %>
+	<ul>
+		<h3>My Music</h3>
+		<li><div class="sidebarIcon nowIcon"></div><span class="menuText">Now Playing</span></li>
+		<li><div class="sidebarIcon historyIcon"></div><span class="menuText">History</span></li>
+	</ul>
+
+	<ul>
+		<% if user_signed_in? %>
+		<h3>Playlists</h3>
+        <div id="createlink">Create Playlist</div>
+      	<% end %>
+      	<form id="createplaylist" action="javascript:createplaylist();">
+        	<input id="playlistname" type="text" name="playlistname" placeholder="Type in a playlist name" value=""/> 
+      	</form>    
+    	<div id="playlistlist">
+      	<% if user_signed_in? %>
+      		<% @playlists = Playlist.where(:userid =>current_user.id).order('created_at DESC')  %>
+        		<% @playlists.each do |playlist| %>
+          		<li class="droppable" id="<%= playlist.id %>"><div class="sidebarIcon playlistIcon"></div><span class="menuText"><%= playlist.name %></span><div class="playlistDelete">Delete</div></li>
+        	<% end %>
+      	<% end %>
+      </div>
+	</ul>
+	<% else %>
+	<br/>
+	<div id="sidebarLogin">
+		<h2>Login to access playlists</h2>
+		<%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+		  <div><%= f.label :email %><br />
+		  <%= f.email_field :email, :autofocus => true %></div>
+
+		  <div><%= f.label :password %><br />
+		  <%= f.password_field :password %></div>
+
+		  <% if devise_mapping.rememberable? -%>
+		    <div><%= f.check_box :remember_me %> <%= f.label :remember_me %></div>
+		  <% end -%>
+
+		  <div id="signinButton"><%= f.submit "Sign in" %></div>
+		<% end %>
+	</div>
+
+	<% end %>
+	
+</section>
+
+<section id="videoBox" class="smallvideo">
+	<div id="player"></div>
+</section>
+
+<section id="videoControls">
+  <p id="videoname">Double-click to play a song</p>
+  <div id="fullscreen" class="smallvideobtn">Full Screen</div>
+</section>
+
+<script>
+
+var tag = document.createElement('script');
+
+tag.src = "//www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+var player;
+
+function onYouTubeIframeAPIReady() {
+	player = new YT.Player('player', {
+	  height: '200',
+	  width: '200',
+	  playerVars: {
+        controls: '0',
+        modestbranding: '1',
+        rel: '0',
+        showinfo: '0'
+      },
+	  events: {
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange,
+        'onError' : onPlayerError
+      }
+	});
+}
+
+
+function onPlayerError(event) {
+  console.log (' error '+event.data);
+  if (window.videocount == 2) {
+    player.loadVideoById(window.videoid2);
+    $('#videoname').text(window.videotitle2)
+  } else {
+    $(".currentTrack").nextOrFirst().dblclick();
+  }
+}
+
+function onPlayerReady(event) {
+  
+  setInterval(updatePlayerInfo, 100);
+  updatePlayerInfo();
+
+  if ($(window).width() < 720) {
+    if ((16 / 9) * (($(window).height()) - 252) > $(window).width()) {
+      $('iframe').attr({
+        'height': '' + (9 / 16) * ($(window).width()) + 'px',
+        'width': '' + $(window).width() + 'px'
+      });
+    } else {
+      $('iframe').attr({
+        'height': '' + (($(window).height()) - 252) + 'px',
+        'width': '' + (($(window).height()) - 252) * (16 / 9) + 'px'
+      });
+    }
+  } else {
+    $('.largevideo').removeAttr("style");
+    $('iframe').attr({
+      'height': '200px',
+      'width': '200px'
+    });
+  }
+}
+
+function updatePlayerInfo() {
+  if(player && player.getDuration) {
+
+    if (seek === false) {
+      $("#progressBarMid").css({'width': (player.getCurrentTime()/player.getDuration())*100+'%'});
+    }
+   $('#timePlayed').text(videotime(player.getCurrentTime()));
+   $('#timeLeft').text(reversetime(player.getCurrentTime() , player.getDuration()));
+  }
+}
+
+function onPlayerStateChange(event) {
+  if (event.data === -1 || event.data === 0 || event.data === 2 || event.data === 5) {          
+    $(".pauseButton").addClass("playButton").removeClass("pauseButton");
+    } else {
+      $(".playButton").addClass("pauseButton").removeClass("playButton");
+    }
+    if (event.data === 0) {
+	  	if (repeat === 1){
+	  		player.seekTo(0)
+	  	} else {
+	  		$('#nowplayingtablebody .currentTrack').nextOrFirst().dblclick();
+	 	 };
+	  };
+	}
+  var userid = undefined
+<% if user_signed_in? %> 
+userid=<%=current_user.id %> 
+
+var createplaylist = function() {
+  var newrec, playlist, playlistname;
+
+  playlistname = $("#playlistname").val();
+  
+  $("#playlistname").val("");
+  
+  playlist = new Youfm.Collections.Playlists();
+  
+  newrec = playlist.create({
+    name: playlistname,
+    userid: <% if user_signed_in? %> <%=current_user.id %> <%end%>
+  }, {
+    success: function() {
+       $("#playlistlist").prepend("<li class=\"droppable\" id="+newrec.get('id')+" ><div class=\"sidebarIcon playlistIcon\"></div><span class=\"menuText\">" + playlistname + "<span><div class=\"playlistDelete\">Delete</div></li>");
+       $("<option playlistid="+newrec.get('id')+">" + playlistname + "</option>").insertAfter('#playlistselect option[selected="selected"]');
+
+    }
+  });
+  
+  $("#createplaylist").hide();
+  $("#createlink").show();
+};
+<%end%>
+
+function is_touch_device() {
+  return !!('ontouchstart' in window);
+}
+
+
+</script>

@@ -1,0 +1,77 @@
+<div id="pageWrap">
+<%= render "header" %>
+<%= render "sidebar" %>
+<%= render "playlistbar" %>
+<%= render "footer" %>
+<%= render "main" %>
+</div>
+
+<div class="modal" id="loginModal"  style="display:none">
+	<div class="closeButton"></div><br/>
+    <h2>Sign in</h2>
+
+	<%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+	  <div><%= f.label :email %><br />
+	  <%= f.email_field :email, :autofocus => true %></div>
+
+	  <div><%= f.label :password %><br />
+	  <%= f.password_field :password %></div>
+<p  style="float:right; margin-right: 10px; font-family: Arial, Helvetica, sans-serif; font-size: 10px; text-transform: uppercase; color: #1476AD;" id="backlink">
+	<a style="" href="/users/password/new">Forgot password?</a>
+	</p>
+	  <% if devise_mapping.rememberable? -%>
+	    <div><%= f.check_box :remember_me %> <%= f.label :remember_me %></div>
+	  <% end -%>
+
+	  <div id="signinButton"><%= f.submit "Sign in" %></div>
+
+	  
+
+	<% end %>
+
+
+</div>
+
+<div class="modal" id="registerModal"  style="display:none">
+	<div class="closeButton"></div>
+    <h2>Sign up</h2>
+
+	<%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
+	  <%= devise_error_messages! %>
+
+	  <div><%= f.label :email %><br />
+	  <%= f.email_field :email, :autofocus => true %></div>
+
+	  <div><%= f.label :password %><br />
+	  <%= f.password_field :password %></div>
+
+	  <div><%= f.label :password_confirmation %><br />
+	  <%= f.password_field :password_confirmation %></div>
+
+	  <div id="signupButton"><%= f.submit "Sign up" %></div>
+	<% end %>
+
+</div>
+
+<div class="modal" id="aboutModal"  style="display:none">
+	<div class="closeButton"></div><br/>
+    <h2>Thanks for using YouFM</h2><br />
+    <p>YouFM was built by Ashraful Sheikh. <a href="http://www.ashraful.me">Read his blog</a> or <a href="http://www.twitter.com/ashraful">follow him on twitter</a></p>
+
+    <p>If you have any questions or suggestions, please send an email to <a href="mailto:inlith@gmail.com"><strong>inlith@gmail.com</strong></a></p>
+
+    <p>Love YouFM? Like us on Facebook!</p>
+
+    <div class="fb-like" data-href="http://www.youfm.org" data-send="false" data-layout="box_count" data-width="450" data-show-faces="true" data-font="segoe ui"></div>
+</div>
+
+<svg id="blurjs-10"><filter id="blur10px"><feGaussianBlur in="SourceGraphic" stdDeviation="10"></feGaussianBlur></filter></svg>
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=211009122312656";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>

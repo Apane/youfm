@@ -1,0 +1,5 @@
+== YouFM
+
+YouFM is a mashup of Spotify and Youtube. Check it out at http://www.youfm.org
+
+Email me at inlith@gmail.com if you have any questions or suggestions.

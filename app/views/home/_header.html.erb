@@ -1,0 +1,35 @@
+<header>
+	<button id="menuButton">Menu</button>
+	<a href="./"><h1 id="logo">YouFM</h1></a>
+	<form id="search" action="javascript:submit();" >
+		<input id="searchbox" type="text" name="searchbox"  placeholder="Type in a song or artist name"/>
+		<button>Search</button>
+	</form>
+
+	<% if user_signed_in? %>
+
+	<div id="userMenu">
+		<h3><%= current_user.email %></h3>
+		<ul id="drops" style="display:none">
+			<a href="/users/edit"><li>Edit Profile</li></a>
+			<a href="/users/edit"><li>Change Password</li></a>
+			<a href="/users/sign_out"  data-method='delete'><li>Log out</li></a>
+		</ul>
+	</div>
+	
+	<% else %><div id="userActions">
+	<div id="loginButton"><h3>Login</h3></div>
+	<div id="registerButton"><h3>Register</h3></div>
+	</div>
+	<% end %>
+	<button id="aboutButton">About</button>
+	<button id="userButton">About</button>
+	<% if user_signed_in? %>
+		<div id="drops2">
+			<a href="/users/edit"><li>Edit Profile</li></a>
+			<a href="/users/edit"><li>Change Password</li></a>
+			<a href="/users/sign_out"  data-method='delete'><li>Log out</li></a>
+		</div>
+	<% end %>
+</header>
+

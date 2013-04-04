@@ -1,0 +1,110 @@
+<style>
+
+body {
+	background: url(/assets/sidebar-bg.png);
+}
+
+#loginpage {
+	width: 500px;
+	margin: auto;
+}
+
+.alert {
+	background: #F7ADA4;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	color: #A5200E;
+	text-transform: uppercase;
+	text-align: center;
+	margin-bottom: 22px;
+	line-height: 50px;
+}
+
+.notice {
+	background: #E5C991;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	color: #A57413;
+	text-transform: uppercase;
+	text-align: center;
+	margin-bottom: 22px;
+	line-height: 50px;
+}
+
+h2 {
+	text-align: center;
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 18px;
+	text-transform: uppercase;
+	color: #357886;
+	padding: 30px 0 0 0;
+	font-weight: bold;
+}
+
+form {
+	width: 310px;
+	margin: auto;
+	padding: 20px;
+	background: white;
+	border: #4d4d4d;
+}
+
+label {
+	font-family: Helvetica, Arial, sans-serif;
+	color: #6F8082;
+	font-size: 10px;
+	text-transform: uppercase;
+	padding: 10px 0;
+}
+
+#error_explanation {
+	background: #F7EBEE;
+	margin-bottom: 25px;
+	padding-bottom: 10px;
+}
+
+#error_explanation h2 {
+	font-size: 14px;
+	color: #A5200E;
+	padding-top:10px;
+	text-align: left;
+	padding-left: 5px;
+}
+
+#error_explanation ul li {
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	color: #4d4d4d;
+	padding: 5px;
+}
+
+
+</style>
+
+<div id="loginpage">
+
+<h2>Sign in</h2><br/>
+
+<%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+  <div><%= f.label :email %><br />
+  <%= f.email_field :email, :autofocus => true %></div>
+
+  <div><%= f.label :password %><br /> 
+  <%= f.password_field :password %></div>
+
+  <% if devise_mapping.rememberable? -%>
+    <div><%= f.check_box :remember_me %> <%= f.label :remember_me %></div>
+  <% end -%>
+
+  <div id="signinButton"><%= f.submit "Sign in" %></div>
+
+
+
+<% end %><br/>
+<p  style="text-align:center;font-family: Arial, Helvetica, sans-serif; font-size: 10px; text-transform: uppercase; color: #1476AD;" id="backlink">
+	<a style="" href="/users/password/new">Forgot password?</a> | <a style="" href="javascript:history.back()">Go Back</a>
+</p>
+</div>
+

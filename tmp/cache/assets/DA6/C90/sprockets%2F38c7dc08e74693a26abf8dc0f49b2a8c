@@ -1,0 +1,424 @@
+o: ActiveSupport::Cache::Entry	:@expires_in0:@compressedF:@value"U{"content_type"application/javascript"source"†S(function() {
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  Youfm.Routers.HomesRouter = (function(_super) {
+
+    __extends(HomesRouter, _super);
+
+    function HomesRouter() {
+      return HomesRouter.__super__.constructor.apply(this, arguments);
+    }
+
+    HomesRouter.prototype.routes = {
+      "search/:term": "search",
+      "": "index",
+      "top100": "top100",
+      "newreleases": "newreleases",
+      "staffpicks": "staffpicks",
+      "nowplaying": "nowplaying",
+      "history": "history",
+      "playlist/:id": "showplaylist",
+      "album/:albumid": "album"
+    };
+
+    HomesRouter.prototype.initialize = function() {
+      window.collection = new Youfm.Collections.Songs();
+      return window.collection.fetch();
+    };
+
+    HomesRouter.prototype.search = function(term) {
+      return $(function() {
+        var uid;
+        window.check = term;
+        $('.toggleview').hide();
+        $("#loading").show();
+        $('#maintablebody').empty();
+        $('*').removeClass("selectSidebar");
+        $(".sidebarIcon").removeAttr("style");
+        uid = 1;
+        return $.ajax({
+          type: "GET",
+          url: "/home/search",
+          data: {
+            query: encodeURI(term)
+          },
+          success: function(data) {
+            $.map(data.tracks, function(item) {
+              var albumid, albumname, artistid, artistname, num, popularity, searchstring, songid, songname, year;
+              songname = $.trim(item.name);
+              songid = $.trim(item.href);
+              artistname = $.trim(item.artists[0].name);
+              artistid = $.trim(item.artists[0].href);
+              albumname = $.trim(item.album.name);
+              albumid = $.trim(item.album.href);
+              popularity = $.trim(Math.ceil(item.popularity * 100) + "%");
+              year = $.trim(item.album.released);
+              searchstring = encodeURI(songname) + "-" + encodeURI(artistname);
+              num = uid++;
+              if (check === term) {
+                $("#loading").hide();
+                $("#table").show();
+                $("#table table").show();
+                $("#maintablebody").append('<tr class="resultbar ' + uid + '"  string="' + searchstring + '"  songname=" ' + songname + '" songid=" ' + songid + '" artistname=" ' + artistname + '" artistid=" ' + artistid + '" albumname=" ' + albumname + '" albumid=" ' + albumid + '" popularity=" ' + popularity + '"><td class="number">' + num + '</td><td class="songtitle">' + songname + '</td><td class="artistname"><a href="/#/search/' + artistname + '">' + artistname + '</a></td><td class="albumname"><a href="/#/album/' + albumid + '">' + albumname + '</a></td><td class="popularity">' + popularity + '</td></tr>');
+                if (uid - 1 === 100 || uid - 1 === data.info.num_results) {
+                  return interactive();
+                }
+              }
+            });
+            if (data.info.num_results === 0) {
+              $("#loading").hide();
+              $("#table").show();
+              return $('#noResults').show();
+            }
+          },
+          error: function(jqXHR, exception) {
+            $("#loading").hide();
+            $("#table").show();
+            $('.errorcode').show();
+            return $("#searchboxBig4").focus();
+          }
+        });
+      });
+    };
+
+    HomesRouter.prototype.album = function(albumid) {
+      return $(function() {
+        var uid;
+        window.check = albumid;
+        $('.toggleview').hide();
+        $("#loading").show();
+        $('#maintablebody').empty();
+        $('*').removeClass("selectSidebar");
+        $(".sidebarIcon").removeAttr("style");
+        uid = 1;
+        return $.ajax({
+          type: "GET",
+          url: "/home/album",
+          data: {
+            query: encodeURI(albumid)
+          },
+          success: function(data) {
+            var albumname, artistid, artistname, itemlength, year;
+            albumname = $.trim(data.album.name);
+            albumid = $.trim(data.album.href);
+            artistname = $.trim(data.album.artist);
+            artistid = $.trim(data.album['artist-id']);
+            year = $.trim(data.album.released);
+            itemlength = $.trim(data.album.tracks.length);
+            return $.map(data.album.tracks, function(item) {
+              var num, popularity, searchstring, songid, songname;
+              songname = $.trim(item.name);
+              songid = $.trim(item.href);
+              popularity = $.trim(Math.ceil(item.popularity * 100) + "%");
+              searchstring = encodeURI(songname) + "-" + encodeURI(artistname);
+              num = uid++;
+              if (check === albumid) {
+                $("#loading").hide();
+                $("#table").show();
+                $("#table table").show();
+                $("#maintablebody").append('<tr class="resultbar ' + uid + '"  string="' + searchstring + '"  songname=" ' + songname + '" songid=" ' + songid + '" artistname=" ' + artistname + '" artistid=" ' + artistid + '" albumname=" ' + albumname + '" albumid=" ' + albumid + '" popularity=" ' + popularity + '"><td class="number">' + num + '</td><td class="songtitle">' + songname + '</td><td class="artistname"><a href="/#/search/' + artistname + '">' + artistname + '</a></td><td class="albumname"><a href="/#/album/' + albumid + '">' + albumname + '</a></td><td class="popularity">' + popularity + '</td></tr>');
+                if (String(num) === String(itemlength)) {
+                  return interactive();
+                }
+              }
+            });
+          },
+          error: function(jqXHR, exception) {
+            $("#loading").hide();
+            $("#table").show();
+            $('.errorcode').show();
+            return $("#searchboxBig4").focus();
+          }
+        });
+      });
+    };
+
+    HomesRouter.prototype.index = function() {
+      window.check = "index";
+      $('.toggleview').hide();
+      $('*').removeClass("selectSidebar");
+      $("#sideBar ul li:eq(0)").addClass("selectSidebar");
+      $(".sidebarIcon").removeAttr("style");
+      $(".welcomeIcon").css("backgroundPosition", "-38px 2px");
+      $('#main').show();
+      return $("#searchboxBig").focus();
+    };
+
+    HomesRouter.prototype.top100 = function() {
+      return $(function() {
+        var uid;
+        window.check = "top";
+        $('.toggleview').hide();
+        $('*').removeClass("selectSidebar");
+        $("#sideBar ul li:eq(1)").addClass("selectSidebar");
+        $(".sidebarIcon").removeAttr("style");
+        $(".topIcon").css("backgroundPosition", "-38px -32px");
+        $("#loading").show();
+        $('#maintablebody').empty();
+        uid = 1;
+        return $.ajax({
+          type: "GET",
+          url: "/home/top",
+          dataType: "xml",
+          success: function(xml) {
+            return $(xml).find("entry").each(function() {
+              var albumid, albumname, albumnamestring, artistid, artistname, artistnamestring, num, popularity, searchstring, songid, songname, year;
+              songname = $.trim($(this).find('name').first().text());
+              artistname = $.trim($(this).find('artist').first().text());
+              artistnamestring = $.trim(artistname.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, ''));
+              songid = $.trim("top" + uid + "");
+              artistid = "noartistid";
+              albumname = $.trim($(this).find('name').eq(1).text());
+              albumnamestring = $.trim(albumname.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, ''));
+              albumid = "noalbumid";
+              popularity = "100%";
+              year = $.trim($(this).find('releaseDate').first().attr('label').split(",").pop());
+              searchstring = encodeURI(songname) + "-" + encodeURI(artistname);
+              num = uid++;
+              if (check === "top") {
+                $("#loading").hide();
+                $("#table").show();
+                $("#table table").show();
+                $('#maintablebody').append('<tr class="resultbar ' + uid + '"  string="' + searchstring + '"  songname=" ' + songname + '" songid=" ' + songid + '" artistname=" ' + artistname + '" artistid=" ' + artistid + '" albumname=" ' + albumname + '" albumid=" ' + albumid + '" popularity=" ' + popularity + '"><td class="number">' + num + '</td><td class="songtitle">' + songname + '</td><td class="artistname"><a href="/#/search/' + artistnamestring + '">' + artistname + '</a></td><td class="albumname"><a href="/#/search/' + albumnamestring + '">' + albumname + '</a></td><td class="popularity">' + popularity + '</td></tr>');
+                if (uid - 1 === 100) {
+                  return interactive();
+                }
+              }
+            });
+          },
+          error: function(jqXHR, exception) {
+            $("#loading").hide();
+            $("#table").show();
+            $('.errorcode').show();
+            return $("#searchboxBig4").focus();
+          }
+        });
+      });
+    };
+
+    HomesRouter.prototype.newreleases = function() {
+      return $(function() {
+        var uid;
+        window.check = "newest";
+        $('.toggleview').hide();
+        $('*').removeClass("selectSidebar");
+        $("#sideBar ul li:eq(2)").addClass("selectSidebar");
+        $(".sidebarIcon").removeAttr("style");
+        $(".newIcon").css("backgroundPosition", "-38px -65px");
+        $("#loading").show();
+        $('#maintablebody').empty();
+        uid = 1;
+        return $.ajax({
+          type: "GET",
+          url: "/home/new",
+          dataType: "xml",
+          success: function(xml) {
+            return $(xml).find("item").each(function() {
+              var albumid, albumname, albumnamestring, artistid, artistname, artistnamestring, num, popularity, searchstring, songid, songname, year;
+              songname = $.trim($(this).find('title').first().text().split("-").shift());
+              artistname = $.trim($(this).find('artist').first().text());
+              artistnamestring = $.trim(artistname.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, ''));
+              songid = $.trim("new" + uid + "");
+              artistid = "noartistid";
+              albumname = $.trim($(this).find('album').first().text());
+              albumnamestring = $.trim(albumname.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, ''));
+              albumid = "noalbumid";
+              popularity = "100%";
+              year = $.trim($(this).find('releaseDate').first().text().split(",").pop());
+              searchstring = encodeURI(songname) + "-" + encodeURI(artistname);
+              num = uid++;
+              if (check === "newest") {
+                $("#loading").hide();
+                $("#table").show();
+                $("#table table").show();
+                $('#maintablebody').append('<tr class="resultbar ' + uid + '"  string="' + searchstring + '"  songname=" ' + songname + '" songid=" ' + songid + '" artistname=" ' + artistname + '" artistid=" ' + artistid + '" albumname=" ' + albumname + '" albumid=" ' + albumid + '" popularity=" ' + popularity + '"><td class="number">' + num + '</td><td class="songtitle">' + songname + '</td><td class="artistname"><a href="/#/search/' + artistnamestring + '">' + artistname + '</a></td><td class="albumname"><a href="/#/search/' + albumnamestring + '">' + albumname + '</a></td><td class="popularity">' + popularity + '</td></tr>');
+                if (uid - 1 === 100) {
+                  return interactive();
+                }
+              }
+            });
+          },
+          error: function(jqXHR, exception) {
+            $("#loading").hide();
+            $("#table").show();
+            $('.errorcode').show();
+            return $("#searchboxBig4").focus();
+          }
+        });
+      });
+    };
+
+    HomesRouter.prototype.staffpicks = function() {
+      return $(function() {
+        var uid;
+        window.check = "picks";
+        $('.toggleview').hide();
+        $('*').removeClass("selectSidebar");
+        $("#sideBar ul li:eq(3)").addClass("selectSidebar");
+        $(".sidebarIcon").removeAttr("style");
+        $(".pickIcon").css("backgroundPosition", "-38px -98px");
+        $("#loading").show();
+        $('#maintablebody').empty();
+        uid = 1;
+        return $.ajax({
+          type: "GET",
+          url: "/home/picks",
+          dataType: "html",
+          success: function(html) {
+            if (check === "picks") {
+              $('#maintablebody').append(html);
+              $("#loading").hide();
+              $("#table").show();
+              $("#table table").show();
+              return interactive();
+            }
+          },
+          error: function(jqXHR, exception) {
+            $("#loading").hide();
+            $("#table").show();
+            $('.errorcode').show();
+            return $("#searchboxBig4").focus();
+          }
+        });
+      });
+    };
+
+    HomesRouter.prototype.nowplaying = function() {
+      return $(function() {
+        window.check = "nowplaying";
+        $('.toggleview').hide();
+        $('*').removeClass("selectSidebar");
+        $("#sideBar ul li:eq(4)").addClass("selectSidebar");
+        $(".sidebarIcon").removeAttr("style");
+        $(".nowIcon").css("backgroundPosition", "-38px -132px");
+        $("#nowplaying").show();
+        if ($('#nowplayingtablebody').children().length === 0) {
+          $("#emptyNowPlaying").show();
+          return $("#searchboxBig2").focus();
+        } else {
+          return $("#nowplayingtable").show();
+        }
+      });
+    };
+
+    HomesRouter.prototype.history = function() {
+      return $(function() {
+        var count, total;
+        window.check = "history";
+        window.collection.fetch();
+        $('.toggleview').hide();
+        $('*').removeClass("selectSidebar");
+        $("#sideBar ul li:eq(5)").addClass("selectSidebar");
+        $(".sidebarIcon").removeAttr("style");
+        $(".historyIcon").css("backgroundPosition", "-38px -166px");
+        $("#historytablebody").empty();
+        count = 1;
+        total = 1;
+        return $.get("/api/histories.json", function(data) {
+          $.map(data, function(item) {
+            var albumfromspotify, albumid, albumname, albumnamestring, artistid, artistname, artistnamestring, historyuser, num, popularity, records, searchstring, songid, songname, songuid, timeplayed, totalcount, uid;
+            songuid = $.trim(item.songid);
+            historyuser = item.userid;
+            timeplayed = $.trim(jQuery.timeago(Date.parse(item.created_at)));
+            totalcount = total++;
+            if (historyuser === String(userid)) {
+              records = window.collection.get(songuid);
+              uid = $.trim(records.get('id'));
+              songname = $.trim(records.get('title'));
+              songid = $.trim(records.get('titlehref'));
+              artistname = $.trim(records.get('artist'));
+              artistnamestring = $.trim(artistname.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, ''));
+              artistid = $.trim(records.get('artisthref'));
+              albumname = $.trim(records.get('album'));
+              albumnamestring = $.trim(albumname.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, ''));
+              albumid = $.trim(records.get('albumhref'));
+              popularity = $.trim(records.get('popularity'));
+              searchstring = encodeURI(songname) + "-" + encodeURI(artistname);
+              albumfromspotify = albumid.indexOf("spotify");
+              num = count++;
+              $("#history").show();
+              $("#historytable").show();
+              if (albumfromspotify !== -1) {
+                $("#historytablebody").prepend('<tr class="historybar ' + uid + '"  string="' + searchstring + '"  songname=" ' + songname + '" songid=" ' + songid + num + '" artistname=" ' + artistname + '" artistid=" ' + artistid + '" albumname=" ' + albumname + '" albumid=" ' + albumid + '" popularity=" ' + popularity + '"><td class="number">' + (data.length - num + 1) + '</td><td class="songtitle">' + songname + '</td><td class="artistname"><a href="/#/search/' + artistname + '">' + artistnamestring + '</a></td><td class="albumname"><a href="/#/album/' + albumid + '">' + albumname + '</a></td><td class="popularity">' + timeplayed + '</td></tr>');
+              } else {
+                $("#historytablebody").prepend('<tr class="historybar ' + uid + '"  string="' + searchstring + '"  songname=" ' + songname + '" songid=" ' + songid + num + '" artistname=" ' + artistname + '" artistid=" ' + artistid + '" albumname=" ' + albumname + '" albumid=" ' + albumid + '" popularity=" ' + popularity + '"><td class="number">' + (data.length - num + 1) + '</td><td class="songtitle">' + songname + '</td><td class="artistname"><a href="/#/search/' + artistname + '">' + artistnamestring + '</a></td><td class="albumname"><a href="/#/search/' + albumnamestring + '">' + albumname + '</a></td><td class="popularity">' + timeplayed + '</td></tr>');
+              }
+              if (totalcount === data.length) {
+                return interactive();
+              }
+            }
+          });
+          if (data.length === 0) {
+            $("#history").show();
+            return $('#emptyHistory').show();
+          }
+        });
+      });
+    };
+
+    HomesRouter.prototype.showplaylist = function(id) {
+      var count, total;
+      window.check = id;
+      window.collection.fetch();
+      $('.toggleview').hide();
+      $("#loading").show();
+      $('*').removeClass("selectSidebar");
+      $("#playlistlist li#" + id + "").addClass("selectSidebar");
+      $(".sidebarIcon").removeAttr("style");
+      $("#playlistlist>li#" + id + "").children(".playlistIcon").css("backgroundPosition", "-38px -200px");
+      $('#maintablebody').empty();
+      $('#emptyPlaylist').show();
+      count = 1;
+      total = 1;
+      return $.get("/api/playlistjoins.json", function(data) {
+        return $.map(data, function(item) {
+          var albumfromspotify, albumid, albumname, albumnamestring, artistid, artistname, artistnamestring, num, playlistid, playlistuser, popularity, records, searchstring, songid, songname, songuid, totalcount, uid, uniqueid;
+          uniqueid = $.trim(item.id);
+          playlistid = $.trim(item.playlistid);
+          playlistuser = item.userid;
+          songuid = $.trim(item.songid);
+          totalcount = total++;
+          $("#table").show();
+          $("#loading").hide();
+          if (playlistid === id && playlistuser === String(userid)) {
+            records = window.collection.get(songuid);
+            uid = $.trim(records.get('id'));
+            songname = $.trim(records.get('title'));
+            songid = $.trim(records.get('titlehref'));
+            artistname = $.trim(records.get('artist'));
+            artistnamestring = $.trim(artistname.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, ''));
+            artistid = $.trim(records.get('artisthref'));
+            albumname = $.trim(records.get('album'));
+            albumnamestring = $.trim(albumname.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, ''));
+            albumid = $.trim(records.get('albumhref'));
+            popularity = $.trim(records.get('popularity'));
+            searchstring = encodeURI(songname) + "-" + encodeURI(artistname);
+            num = count++;
+            if (check === id) {
+              $('#emptyPlaylist').hide();
+              $("#loading").hide();
+              $("#table table").show();
+              albumfromspotify = albumid.indexOf("spotify");
+              if (albumfromspotify !== -1) {
+                $("#maintablebody").append('<tr class="playlistbar ' + uid + '"  unique="' + uniqueid + num + '" string="' + searchstring + '"  songname=" ' + songname + '" songid=" ' + songid + num + '" artistname=" ' + artistname + '" artistid=" ' + artistid + '" albumname=" ' + albumname + '" albumid=" ' + albumid + '" popularity=" ' + popularity + '"><td class="number">' + num + '</td><td class="songtitle">' + songname + '</td><td class="artistname"><a href="/#/search/' + artistnamestring + '">' + artistname + '</a></td><td class="albumname"><a href="/#/album/' + albumid + '">' + albumname + '</a></td><td class="popularity">' + popularity + '</td></tr>');
+              } else {
+                $("#maintablebody").append('<tr class="playlistbar ' + uid + '"  unique="' + uniqueid + num + '" string="' + searchstring + '"  songname=" ' + songname + '" songid=" ' + songid + num + '" artistname=" ' + artistname + '" artistid=" ' + artistid + '" albumname=" ' + albumname + '" albumid=" ' + albumid + '" popularity=" ' + popularity + '"><td class="number">' + num + '</td><td class="songtitle">' + songname + '</td><td class="artistname"><a href="/#/search/' + artistnamestring + '">' + artistname + '</a></td><td class="albumname"><a href="/#/search/' + albumnamestring + '">' + albumname + '</a></td><td class="popularity">' + popularity + '</td></tr>');
+              }
+            }
+          }
+          if (totalcount === data.length) {
+            return interactive();
+          }
+        }, data.length === 0 ? ($("#table").show(), $('#maintablebody').empty(), $('#emptyPlaylist').show()) : void 0);
+      });
+    };
+
+    return HomesRouter;
+
+  })(Backbone.Router);
+
+}).call(this);
+"
+mtime"2013-03-11T23:40:11+06:00"
+class"BundledAsset"digest"%6e374c3dd68d859a209155343a1fac9f"required_assets_digest"%1e666ac7991feb7e5fcba374e06ff1de"logical_path"$backbone/routers/home_router.js"lengthi†S"_version"%6776f581a4329e299531e1d52aa59832"pathname"L$root/app/assets/javascripts/backbone/routers/home_router.js.coffee.erb:@created_atf1363083437.3819039 q

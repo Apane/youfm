@@ -1,0 +1,111 @@
+<section id="loading" class="toggleview largetable is-scrollable" style="display:none">
+	<img src="/assets/loader.gif" />
+</section>
+
+<section id="main" class="toggleview largetable is-scrollable">
+	<div id="interlace">
+		<h1>Welcome to YouFM</h1>
+		<form  action="javascript:submitbig();" >
+			<input id="searchboxBig" type="text" name="searchbox" placeholder="Type in a song or artist name"/>
+		</form><br/><br/><br/>
+		<div class="fb-like" data-href="http://www.youfm.org" data-send="false" data-layout="box_count" data-width="450" data-show-faces="true" data-font="segoe ui"></div><br/><br/>
+	</div>
+</section>
+
+<section id="table" class="toggleview largetable is-scrollable" style="display:none">
+	<table class="toggleview" style="display:none">
+		<thead>
+		<tr id="tableHeader">
+			<th class="number header">#</th>
+			<th class="songtitle header">Song Title</th>
+			<th class="artistname header">Artist Name</th>
+			<th class="albumname header">Album Name</th>
+			<th class="popularity header">Popularity</th>
+		</tr>
+		<thead>
+		<tbody id="maintablebody">
+		</tbody>
+	</table>
+	<div id="emptyPlaylist" class="toggleview largetable" style="display:none; padding: 30px; text-align:center;"><img src="/assets/playlist-default.png" /></div>
+	<div class="toggleview errorcode" style="display:none; padding: 30px; text-align:center;"><img src="/assets/oops-error.png" /></div>
+	<div id="noResults" class="toggleview" style="display:none; padding: 30px; text-align:center;"><br /><img src="/assets/no-results.png" /><br /><br />
+		<form  action="javascript:submitbig4();" >
+			<input id="searchboxBig4" type="text" name="searchbox4" placeholder="Type in a song or artist name"/>
+		</form>
+	</div>
+
+</section>
+
+<section id="nowplaying" class="toggleview largetable is-scrollable" style="display:none">
+	<table class="toggleview" id="nowplayingtable" style="display:none">
+		<thead>
+		<tr id="nowplayingtableHeader">
+			<th class="number header" style="display:none;">#</th>
+			<th class="songtitle header">Song Title</th>
+			<th class="artistname header">Artist Name</th>
+			<th class="albumname header">Album Name</th>
+			<th class="popularity header">Popularity</th>
+		</tr>
+		<thead>
+		<tbody id="nowplayingtablebody">
+		</tbody>
+	</table>
+	<div id="emptyNowPlaying" class="toggleview" style="display:none; padding: 50px 0 0 0; text-align:center;"><img src="/assets/empty-nowplaying.png" />
+		<form  action="javascript:submitbig2();" >
+			<input id="searchboxBig2" type="text" name="searchbox2" placeholder="Type in a song or artist name"/>
+		</form>
+	</div>
+</section>
+
+<section id="history" class="toggleview largetable is-scrollable" style="display:none">
+	<table class="toggleview" id="historytable" style="display:none">
+		<thead>
+		<tr id="historytableHeader">
+			<th class="number header">#</th>
+			<th class="songtitle header">Song Title</th>
+			<th class="artistname header">Artist Name</th>
+			<th class="albumname header">Album Name</th>
+			<th class="popularity header">Played On</th>
+		</tr>
+		<thead>
+		<tbody id="historytablebody">
+		</tbody>
+	</table>
+	<div class="toggleview errorcode" style="display:none; padding: 30px; text-align:center;"><img src="/assets/oops-error.png" /></div>
+	<div id="emptyHistory" class="toggleview" style="display:none; padding: 50px 0 0 0; text-align:center;"><img src="/assets/empty-history.png" />
+		<form  action="javascript:submitbig3();" >
+			<input id="searchboxBig3" type="text" name="searchbox3" placeholder="Type in a song or artist name"/>
+		</form>
+	</div>
+</section>
+
+<div class="customrightmenu" style="display:none">
+	<ul>
+		<li class="rcplaynow">Play Now</li>
+		<li class="rcplaynext">Play Next</li>
+		<li class="rcplayall">Play All</li>
+		<li class="rcqueue">Add To Queue</li>
+		<% if user_signed_in? %>
+		<div class="addtoplaylist">
+			<p>Add To Playlist:</p>
+			<select name="dropdown" id="playlistselect">
+				<option selected="selected">None</option> 
+      		<% @playlists = Playlist.where(:userid =>current_user.id).order('created_at DESC')  %>
+        		<% @playlists.each do |playlist| %>
+          		<option playlistid="<%= playlist.id %>"><%= playlist.name %></option>
+        	<% end %>
+      	
+			</select>
+		</div><% end %>
+	</ul>
+</div>
+
+<div class="playlistrightmenu" style="display:none">
+	<ul>
+		<li class="rcplaynow">Play Now</li>
+		<li class="rcplaynext">Play Next</li>
+		<li class="rcplayall">Play All</li>
+		<li class="rcqueue">Add To Queue</li>
+		<li class="rcremove">Remove from Playlist</li>
+	</ul>
+</div>
